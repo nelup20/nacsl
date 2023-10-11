@@ -1,3 +1,5 @@
+.PHONY: clean release run
+
 CC := gcc
 COMPILER_FLAGS := -g
 COMPILER_FLAGS_RELEASE := -O3 -strip
@@ -9,22 +11,22 @@ MAIN_FILE := $(SRC_DIR)/program.c
 BINARY := $(BUILD_DIR)/program.exe
 
 C_FILES := $(filter-out $(MAIN_FILE),$(shell find $(SRC_DIR) -name '*.c'))
-OBJECT_FILES := $(subst src,build,$(patsubst %.c,%.o,$(C_FILES)))
-
-.PHONY: clean release
+OBJECT_FILES := $(addprefix build/,$(patsubst %.c,%.o,$(C_FILES)))
 
 all: $(BINARY)
 
-$(BINARY): $(OBJECT_FILES)
+$(BINARY): $(OBJECT_FILES) $(MAIN_FILE)
 	$(CC) $(COMPILER_FLAGS) $(OBJECT_FILES) $(MAIN_FILE) -o $@
 
-// TODO: stop recompiling all files on change
-$(OBJECT_FILES): $(C_FILES)
+build/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(COMPILER_FLAGS) -c $(subst build,src,$(patsubst %.o,%.c,$@)) -o $@
+	$(CC) $(COMPILER_FLAGS) -c $< -o $@
 
 release: clean
 	@echo "TODO: release"
 
 clean:
 	@rm -rf $(BUILD_DIR)/*
+
+run:
+	@$(BINARY)
