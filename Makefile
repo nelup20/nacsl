@@ -18,7 +18,7 @@ all: $(BINARY)
 $(BINARY): $(OBJECT_FILES) $(MAIN_FILE)
 	$(CC) $(COMPILER_FLAGS) $(OBJECT_FILES) $(MAIN_FILE) -o $@
 
-build/%.o: %.c
+build/%.o: %.c %.h
 	@mkdir -p $(dir $@)
 	$(CC) $(COMPILER_FLAGS) -c $< -o $@
 
